@@ -1,31 +1,65 @@
-import { tasks } from '../models/taskModel.js';
-import { v4 as uuidv4 } from 'uuid';
+import tasks from '../models/taskModel.js';
+// import userModel from "../models/userModel.js";
 
-export const createTask = (req, res) => {
+
+
+ export const createTask = async (req, res) => {
   const { title, startTime, endTime, priority, status } = req.body;
-
-  const id = uuidv4();
-  tasks.push({ id, title, startTime: new Date(startTime), endTime: new Date(endTime), priority, status });
-  res.status(201).json({ message: 'Task created successfully', taskId: id });
-};
-
-export const updateTask = (req, res) => {
-  const { id } = req.params;
-  const { title, startTime, endTime, priority, status } = req.body;
-
-  const task = tasks.find(task => task.id === id);
-  if (!task) return res.status(404).json({ message: 'Task not found.' });
-
-  if (status === 'finished' && task.status !== 'finished') {
-    task.endTime = new Date();
+  try {
+    const newTask = new tasks({ title, startTime, endTime, priority, status });
+    await newTask.save();
+    res.status(201).json({ message: 'Task is created', success: true });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to create task', success: false });
   }
-  Object.assign(task, { title, startTime: new Date(startTime), endTime: new Date(endTime), priority, status });
-  res.json({ message: 'Task updated successfully.' });
+}
+
+export const deleteTaskById = async (req, res) => {
+  try {
+      const { id } = req.params.id;
+      await tasks.findByIdAndDelete(id);
+      res.status(200)
+          .json({ message: 'Task is deleted', success: true });
+  } catch (err) {
+      res.status(500).json({ message: 'Failed to delete task', success: false });
+  }
+}
+
+
+
+
+export const updateTask = async (req, res) => {
+  try{
+  const id  = req.params.id;
+  const { title, startTime, endTime, priority, status } = req.body;
+
+  const task = await tasks.findById(id);
+
+  if (!task) {
+    return res.status(404).json({ message: "Task not found!" });
+  }
+
+  task.title = title || task.title;
+  task.startTime = startTime || task.startTime;
+  task.endTime = endTime || task.endTime;
+  task.priority = priority || task.priority;
+  task.status = status || task.status;
+
+  await task.save();
+
+  res.status(200)
+            .json({ message: 'Task Updated', success: true });
+    } catch (err) {
+        res.status(500).json({ message: 'Failed to updated task', success: false });
+    }
 };
 
-export const getTasks = (req, res) => {
+
+
+export const getTasks = async (req, res) => {
   const { priority, status, sortBy } = req.query;
-  let filteredTasks = tasks;
+  const task = await tasks.find();
+  let filteredTasks = task;
 
   if (priority) filteredTasks = filteredTasks.filter(task => task.priority === parseInt(priority, 10));
   if (status) filteredTasks = filteredTasks.filter(task => task.status === status);
@@ -35,3 +69,6 @@ export const getTasks = (req, res) => {
 
   res.json(filteredTasks);
 };
+
+// GET /tasks?priority=1&status=Completed&sortBy=startTime
+
