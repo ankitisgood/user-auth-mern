@@ -1,15 +1,17 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './LoginPopup.css'
 import { assets } from '../assets/assets'
-// import { StoreContext } from '../../Context/StoreContext'
 import { StoreContext } from '../context/StoreContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
+import { Link, useNavigate } from 'react-router-dom'
+
 
 const LoginPopup = ({ setShowLogin }) => {
 
-    const { setToken, url,loadCartData } = useContext(StoreContext)
+    const { setToken, url } = useContext(StoreContext)
     const [currState, setCurrState] = useState("Sign Up");
+    // const navigate = useNavigate();
 
     const [data, setData] = useState({
         name: "",
@@ -34,16 +36,37 @@ const LoginPopup = ({ setShowLogin }) => {
             new_url += "/api/user/register"
         }
         const response = await axios.post(new_url, data);
+        console.log(response)
+        /*
         if (response.data.success) {
             setToken(response.data.token)
             localStorage.setItem("token", response.data.token)
             loadCartData({token:response.data.token})
             setShowLogin(false)
+            console.log("pop up should be clsed now")
         }
         else {
             toast.error(response.data.message)
         }
+        */
+        try {
+            if (response.data.success) {
+                setToken(response.data.token);
+                localStorage.setItem("token", response.data.token);
+                setShowLogin(false); // <-- Make sure this is always called on success
+                
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            toast.error("An unexpected error occurred.");
+        }
+        
     }
+
+   
+    
 
     return (
         <div className='login-popup'>

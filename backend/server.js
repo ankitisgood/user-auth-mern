@@ -5,6 +5,7 @@ import userRouter from "./routes/userRoute.js";
 import 'dotenv/config'
 import taskRouter from "./routes/taskRoute.js";
 import dashboardRouter from "./routes/dashboardRoutes.js";
+import cookieParser from "cookie-parser";
 
 // app config
 const app = express()
@@ -13,9 +14,11 @@ const port = process.env.PORT || 4000;
 // middlewares
 app.use(express.json())
 app.use(cors())
+app.use(cookieParser());
 
 // db connection
 connectDB()
+
 
 // api endpoints
 app.use("/api/user", userRouter)

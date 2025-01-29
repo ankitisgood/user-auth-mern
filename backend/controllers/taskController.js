@@ -3,16 +3,21 @@ import tasks from '../models/taskModel.js';
 
 
 
+
+
  export const createTask = async (req, res) => {
   const { title, startTime, endTime, priority, status } = req.body;
   try {
-    const newTask = new tasks({ title, startTime, endTime, priority, status });
+    const newTask = new tasks({ user: req.user.id, title, startTime, endTime, priority, status });
     await newTask.save();
     res.status(201).json({ message: 'Task is created', success: true });
   } catch (err) {
     res.status(500).json({ message: 'Failed to create task', success: false });
   }
 }
+
+
+
 
 export const deleteTaskById = async (req, res) => {
   try {
