@@ -9,7 +9,7 @@ import { ToastContainer } from 'react-toastify';
 
 const App = () => {
 
-  const [showLogin,setShowLogin] = useState(false); 
+  const [showLogin, setShowLogin] = useState(false); 
 
   return (
     <>
@@ -20,8 +20,8 @@ const App = () => {
         <Routes>
           <Route path='/' element={<Home />}/>
         </Routes>
+        <Footer />
       </div>
-      <Footer />
     </>
 
   )

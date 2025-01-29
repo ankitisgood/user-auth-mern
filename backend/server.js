@@ -3,6 +3,9 @@ import cors from 'cors'
 import { connectDB } from "./config/db.js";
 import userRouter from "./routes/userRoute.js";
 import 'dotenv/config'
+import taskRouter from "./routes/taskRoute.js";
+import dashboardRouter from "./routes/dashboardRoutes.js";
+import cookieParser from "cookie-parser";
 
 // app config
 const app = express()
@@ -11,12 +14,16 @@ const port = process.env.PORT || 4000;
 // middlewares
 app.use(express.json())
 app.use(cors())
+app.use(cookieParser());
 
 // db connection
 connectDB()
 
+
 // api endpoints
 app.use("/api/user", userRouter)
+app.use('/api/tasks', taskRouter);
+app.use('/api/dashboard', dashboardRouter);
 
 app.get("/", (req, res) => {
     res.send("API Working")
@@ -32,4 +39,4 @@ app.listen(port, () => console.log(`Server started on http://localhost:${port}`)
 // 6:4:14 
 // 6:23:34 integrating backend in frontend
 // 6:48:30 logout
-// 7:07:33
+// 7:07:33  auth.js middleware

@@ -2,11 +2,18 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import validator from "validator";
 import userModel from "../models/userModel.js";
-
+/*
 //create token
 const createToken = (id) => {
     return jwt.sign({id}, process.env.JWT_SECRET);
 }
+*/
+
+const createToken = (id) => {
+    return  jwt.sign({id}, process.env.JWT_SECRET);
+}
+
+
 // id will be self generated 
 
 //login user
@@ -26,7 +33,11 @@ const loginUser = async (req,res) => {
         }
 
         const token = createToken(user._id)
-        res.json({success:true,token})
+        // console.log(token)
+        // res.json({success:true,token})
+        res.cookie("jwt", token, {
+            httpOnly: true,
+        }).status(200).json({ success: true, token, user });
     } catch (error) {
         console.log(error);
         res.json({success:false,message:"Error"})
@@ -65,5 +76,15 @@ const registerUser = async (req,res) => {
         res.json({success:false,message:"Error"})
     }
 }
+
+export const logout = async (req, res) => {
+	try {
+		res.cookie("jwt", "");
+		res.status(200).json({ message: "Logged out successfully" });
+	} catch (error) {
+		console.log("Error in logout controller", error.message);
+		res.status(500).json({ error: "Internal Server Error" });
+	}
+};
 
 export {loginUser, registerUser}

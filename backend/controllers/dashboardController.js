@@ -1,4 +1,4 @@
-import { tasks } from '../models/taskModel.js';
+import tasks from '../models/taskModel.js';
 import { calculateTimeLapsed, calculateBalanceTime, calculateTotalTime } from '../utils/timeCalculations.js';
 
 export const getDashboardStats = (req, res) => {

@@ -2,20 +2,35 @@ import React, { useContext, useEffect, useState } from 'react'
 import './Navbar.css'
 import { assets } from '../assets/assets'
 import { Link, useNavigate } from 'react-router-dom'
-// import { StoreContext } from '../../Context/StoreContext'
 import { StoreContext } from '../context/StoreContext'
+import axios from 'axios'
 
 const Navbar = ({ setShowLogin }) => {
 
   const [menu, setMenu] = useState("home");
-  const {  token ,setToken } = useContext(StoreContext);
+  const {  url, token , setToken } = useContext(StoreContext);
   const navigate = useNavigate();
 
+  /*
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
     navigate('/')
   }
+  */
+
+  const logout = async () => {
+    try {
+      await axios.post("http://localhost:4000/api/user/logout");
+      // localStorage.setItem("token", null);
+      localStorage.removeItem("token");
+      console.log("logged out")
+      setToken("");
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className='navbar'>
